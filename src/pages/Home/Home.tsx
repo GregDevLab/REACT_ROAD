@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 
 const Home = () => {
   return (
@@ -27,7 +28,7 @@ const Home = () => {
 		<section className='pb-5'>
 			<h3>Rejoignez-nous :</h3>
 			<p className='pb-2'>
-			Prêt à commencer votre parcours d'apprentissage du développement web avec DevPath ? Inscrivez-vous gratuitement dès aujourd'hui ou connectez-vous si vous avez déjà un compte		
+			Prêt à commencer votre parcours d'apprentissage du développement web avec DevPath ?<br></br><Link to='/inscription'>Inscrivez-vous</Link> gratuitement dès aujourd'hui ou <Link to='/connexion'>connectez-vous</Link> si vous avez déjà un compte		
 			</p>
 		</section>
 	</>

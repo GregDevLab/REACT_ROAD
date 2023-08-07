@@ -1,4 +1,5 @@
 import { AuthProvider } from "@src/context/AuthContext";
+import { CacheProvider } from "@src/context/useCache";
 import Router from "@src/routes";
 import "@src/styles/global.css";
 import { ConfigProvider } from "antd";
@@ -10,9 +11,11 @@ import { RouterProvider } from "react-router-dom";
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
 		<ConfigProvider theme={{ token: { colorPrimary: '#67a5df' } }}>
-			<AuthProvider>
-				<RouterProvider router={Router} />
-			</AuthProvider>
+			<CacheProvider>
+				<AuthProvider>
+						<RouterProvider router={Router} />
+				</AuthProvider>
+			</CacheProvider>
 		</ConfigProvider>
     </React.StrictMode>
 );

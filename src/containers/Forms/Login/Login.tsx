@@ -1,5 +1,6 @@
 import { login } from "@src/api/auth";
 import { AuthContext } from "@src/context/AuthContext";
+import useMutation from "@src/hooks/useMutation";
 import { Button, Form, Input } from "antd";
 import React, { useContext } from "react";
 
@@ -9,36 +10,48 @@ type FieldType = {
     password?: string;
 };
 
+interface FecthData {
+	[key: string]: any;
+	object: {
+		safeUser:UserData
+	}
+}
+
+interface UserData {
+	name: string;
+	email: string;
+	role?: string;
+}
+
 const Login: React.FC = () => {
 	const context = useContext<any>(AuthContext);
+	const [error, setError] = React.useState<string>("");
 	const { handleConnect } = context;
-	const [error, setError] = React.useState<string>("")
+	
+	const {mutate} = useMutation({
+		mutationFn: login, 
+		onError: (error) => setError(error.response.data.message ?? error.message), 
+		onSuccess: (response:FecthData) => userLoginSuccess(response.data.object.safeUser) 
+	})
 
-	const onFinish = async (values: any) => {
-		try {
-			setError("")
-			const response = await login(values)
-			const {name,email }  = response.data.object
-			handleConnect({
-				name,
-				email,
-				role: 'USER',
-				isLoggedIn: true,
-			})
-		} catch (error: any) {
-			console.log("🚀 ~ file: Login.tsx:22 ~ onFinish ~ error:", error)
-			setError(error.response.data.message ?? error.message)
-		}
+	const userLoginSuccess = (data:UserData) => {
+		const {name,email, role } = data;
+		handleConnect({
+			name,
+			email,
+			role: role ? role : "USER",
+			isLoggedIn: true,
+		})
+	}
+
+	const onFinish = (values: any) => {
+		setError("")
+		mutate(values)
 	};
 
 	const onFinishFailed = (errorInfo: any) => {
 		console.log("Failed:", errorInfo);
 	};
-
-
-
-
-	
 
 	return (
     <Form

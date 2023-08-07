@@ -1,5 +1,6 @@
 import { getMe, logOut } from "@src/api/user";
-import { useEffect, useState } from 'react';
+import { CacheContext } from "@src/context/useCache";
+import { useContext, useEffect, useState } from 'react';
 
 export interface UserAuth {
 	name?: string;
@@ -9,6 +10,7 @@ export interface UserAuth {
 }
 
 const useAuth = () => {
+	const {removeAll} = useContext(CacheContext);
 	const [user, setUser] = useState<UserAuth>({ isLoggedIn: false });	
 	const [loading, setLoading] = useState(true);
 
@@ -20,6 +22,7 @@ const useAuth = () => {
 	const handleDisconnect = () => {
 		logOut()
 		.then(() => {
+			removeAll()
 			setUser({isLoggedIn: false});
 			window.localStorage.setItem('isLoggedIn', JSON.stringify(false));
 			window.localStorage.removeItem('key');
@@ -34,10 +37,12 @@ const useAuth = () => {
 		const isLoggedIn = window.localStorage.getItem('isLoggedIn');
 
 		if (isLoggedIn) {
-			getMe().then(({ data }) => {
+			getMe()
+			.then(({ data }) => {
 				handleConnect({ isLoggedIn: true, ...data.object });
 			})
 			.catch((error) => {
+				console.log("🚀 ~ file: useAuth.tsx:45 ~ useEffect ~ error:", error)
 				handleDisconnect()
 			})
 			.finally(() => {
@@ -49,10 +54,6 @@ const useAuth = () => {
 			setLoading(false);
 		}, 1000);
 	}, []);
-
-	useEffect(() => {
-		console.log("🚀 ~ file: useAuth.tsx:49 ~ useAuth ~ user:", user)
-	}, [user]);
 	
 	return {
 		user,

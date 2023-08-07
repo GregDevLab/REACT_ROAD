@@ -21,7 +21,6 @@ const App: React.FC = () => {
                 collapsedWidth={width}
                 width={maxwidth}
                 onBreakpoint={(broken) => {
-                    console.log("🚀 ~ file: Root.tsx:30 ~ broken:", broken);
                     setWidth(80);
                     setMaxWidth(broken ? 0 : 200);
                 }}
