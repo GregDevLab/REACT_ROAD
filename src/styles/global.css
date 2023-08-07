@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pour Chrome, Safari et Opera */
+::-webkit-scrollbar {
+    width: 5px; /* Largeur de la scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Couleur de fond de la piste */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(
+        0,
+        0,
+        0,
+        0.2
+    ); /* Couleur du thumb (la barre de défilement elle-même) */
+    border-radius: 20px; /* Rayon de la bordure du thumb */
+    border: 3px solid transparent; /* Bordure du thumb */
+}
+
+/* Changez la couleur du thumb lors du survol */
+*:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Pour Firefox */
+* {
+    scrollbar-width: thin; /* "thin" ou "auto" ou "none" */
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent; /* Couleur du thumb et de la piste */
+}
+
+/* Pour IE et Edge */
+body {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+body::-ms-scrollbar {
+    display: none; /* Edge */
+}
