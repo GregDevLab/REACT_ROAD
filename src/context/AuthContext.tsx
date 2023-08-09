@@ -36,4 +36,3 @@ export const AuthProvider = ({ children }: ProviderProps) => {
 	);
 };
 
-// Custom hook pour accéder facilement au contexte d'authentification

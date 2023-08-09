@@ -1,5 +1,5 @@
 import { AuthProvider } from "@src/context/AuthContext";
-import { CacheProvider } from "@src/context/useCache";
+import { CacheProvider } from "@src/context/CacheContext";
 import Router from "@src/routes";
 import "@src/styles/global.css";
 import { ConfigProvider } from "antd";

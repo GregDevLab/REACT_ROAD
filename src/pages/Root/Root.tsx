@@ -50,14 +50,14 @@ const App: React.FC = () => {
                 <Content
                     style={{
                         margin: "24px 16px",
-                        padding: 24,
+                        padding: "0 24px",
                         minHeight: 280,
                         background: colorBgContainer,
 						maxHeight: 'calc(100vh - 64px)',
 						overflowY: 'scroll'
                     }}
                 >
-					<div className='max-w-[800px] mx-[auto] h-[100%]'>
+					<div className='max-w-[1200px] mx-[auto] h-[100%]'>
                     	<Outlet />
 					</div>
                 </Content>

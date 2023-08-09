@@ -13,7 +13,6 @@ const AdminWrapper = () => {
 	
 	return (
 		<>
-			<p>protected</p>
 			<Outlet />
 		</>
 	)

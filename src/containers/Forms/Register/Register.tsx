@@ -1,48 +1,28 @@
-import { signin } from "@src/api/auth";
-import { AuthContext } from "@src/context/AuthContext";
+import { register } from "@src/api/auth";
 import useMutation from "@src/hooks/useMutation";
 import { Button, Form, Input } from "antd";
-import React, { useContext } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
 
 type FieldType = {
-    email?: string;
+	name: string;
+    email: string;
     password?: string;
 };
 
-interface FecthData {
-	[key: string]: any;
-	object: {
-		safeUser:UserData
-	}
-}
 
-interface UserData {
-	name: string;
-	email: string;
-	role?: string;
-}
-
-const Login = () => {
-	const context = useContext<any>(AuthContext);
+const Register = () => {
 	const [error, setError] = React.useState<string>("");
-	const { handleConnect} = context;
+	const navigate = useNavigate();
 
-
+	
 	const {mutate} = useMutation({
-		mutationFn: signin, 
+		mutationFn: register, 
+		queryKey: ["users"],
 		onError: (error) => setError(error.response.data.message ?? error.message), 
-		onSuccess: (response:FecthData) => userLoginSuccess(response.data.object.safeUser) 
+		onSuccess: () =>  navigate("/connexion", { replace: true })
 	})
-
-	const userLoginSuccess = (data:UserData) => {
-		const {name,email, role } = data;
-		handleConnect({
-			name,
-			email,
-			role: role ? role : "USER",
-			isLoggedIn: true,
-		})
-	}
 
 	const onFinish = (values: any) => {
 		setError("")
@@ -67,6 +47,13 @@ const Login = () => {
     >
 		{error && <em className="text-red-500">{error}</em>}
         <Form.Item<FieldType>
+            label="Pseudo"
+            name="name"
+            rules={[{ required: true, message: "Saisissez votre pseudo !" }]}
+        >
+            <Input />
+        </Form.Item>
+        <Form.Item<FieldType>
             label="Email"
             name="email"
             rules={[{ required: true, message: "Saisissez votre email !" }]}
@@ -82,7 +69,6 @@ const Login = () => {
             <Input.Password />
         </Form.Item>
 
-
         <Form.Item >
             <Button type="primary" htmlType="submit" style={{width:'100%'}}>
                 Submit
@@ -92,4 +78,4 @@ const Login = () => {
 	)
 };
 
-export default Login;
+export default Register;

@@ -10,14 +10,12 @@ const ProtectedWrapper = () => {
 
 	if(!user.isLoggedIn)  return (
 		<>
-			<p>Vous devez être authentifié</p>
 			<Login />
 		</>
 	)
 	
 	return (
 		<>
-			<p>protected</p>
 			<Outlet />
 		</>
 	)

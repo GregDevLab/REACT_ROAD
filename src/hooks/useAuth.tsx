@@ -1,5 +1,5 @@
 import { getMe, logOut } from "@src/api/user";
-import { CacheContext } from "@src/context/useCache";
+import { CacheContext } from "@src/context/CacheContext";
 import { useContext, useEffect, useState } from 'react';
 
 export interface UserAuth {

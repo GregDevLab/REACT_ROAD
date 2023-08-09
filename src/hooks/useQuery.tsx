@@ -1,13 +1,16 @@
-import { CacheContext } from "@src/context/useCache"
+import { CacheContext } from "@src/context/CacheContext"
 import { AxiosResponse } from "axios"
 import { useContext, useEffect, useState } from 'react'
 
 interface QueryProps {
-	queryFn: (data?: any,select?:{}) => Promise<AxiosResponse<any, any>>
-	queryKey: string
+	queryFn: () => Promise<AxiosResponse<any, any>>
+	queryKey: [string, any?],
+	onSuccess?: (data:any) => void
+	onError?: (error:any) => void
+	enabled?: boolean
 }
 
-const useQuery = ({queryFn, queryKey}:QueryProps) => {
+const useQuery = ({queryFn, queryKey, onSuccess, onError, enabled = true}:QueryProps) => {
 	const {cache, addKey} = useContext(CacheContext)
 	
 	const [data, setData] = useState([])
@@ -15,18 +18,24 @@ const useQuery = ({queryFn, queryKey}:QueryProps) => {
 	const [error, setError] = useState<any>(null)
 	
 	const fetchData = async () => {
+		if(!enabled){
+			return
+		}
 		setLoading(true);
 		try {
-			const cachedData = cache[queryKey]
+			const cachedData = cache[queryKey.join("-")]
 			if(!cachedData){
 				const response = await queryFn();
-				addKey(queryKey, response.data)
+				addKey(queryKey.join('-'), response.data)
 				setData(response.data);
+				onSuccess && onSuccess(response.data)
 			}
 			else{
 				setData(cachedData)
+				onSuccess && onSuccess(cachedData)
 			}
 		} catch (error:any) {
+			onError && onError(error)
 			setError(error);
 		} finally {
 			setLoading(false);
@@ -36,13 +45,14 @@ const useQuery = ({queryFn, queryKey}:QueryProps) => {
 	useEffect(() => {
 
 		fetchData();
-	}, [queryFn]);
+	}, [queryFn, cache]);
 
 	return {
 		data,
 		loading,
 		error,
-		queryFn
+		queryFn,
+		refetch	: () => { enabled = true ;fetchData()}
 	}
 }
 
