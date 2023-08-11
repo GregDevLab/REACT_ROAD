@@ -15,9 +15,15 @@ export const FilterProvider = ({children}:any) => {
 		byDate: (key:string,order:Order= 'ASC', data=filteredData) => setFilteredData(sortByDate(key,order, data)),
 	}
 
-	const search = (key:string, value:string, data=filteredData) => {
+	const filterBoolean = (key:string, value:boolean|string) => {
+		if(value === 'all') return setFilteredData(originalData);
+		const filtered = originalData.filter((item) => item[key] === value);
+		setFilteredData(filtered);
+	}
+
+	const search = (key:string, value:string) => {
 		if(!value) return setFilteredData(originalData);
-		const filtered = [...data].filter((item) => String(item[key]).toLowerCase().includes(value.toLowerCase()));
+		const filtered = filteredData.filter((item) => String(item[key]).toLowerCase().includes(value.toLowerCase()));
 		setFilteredData(filtered);
 	}
 
@@ -32,7 +38,7 @@ export const FilterProvider = ({children}:any) => {
 	}, [filteredData]);
 
 	return (
-		<FilterContext.Provider value={{setOriginalData, sort,search, filteredData}}>
+		<FilterContext.Provider value={{setOriginalData, sort,search, filteredData, filterBoolean}}>
 			{children}
 		</FilterContext.Provider>
 	);

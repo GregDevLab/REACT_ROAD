@@ -24,6 +24,6 @@ export const updateRoadmap = async (id:string|number,data:IRoadmap ) => {
 }
 
 export const deleteRoadmap = async (id:string|number) => {
-	const response =  axiosInstance.get(`${BASE_URL}/delete/${id}`);
+	const response =  axiosInstance.delete(`${BASE_URL}/delete/${id}`);
 	return response;
 }
