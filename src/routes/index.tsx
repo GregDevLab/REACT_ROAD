@@ -1,5 +1,5 @@
 import { FilterProvider } from "@src/context/FilterContext";
-import { Admin, Error, Home, Login, Profil, Register, Roadmap, Root } from "@src/pages";
+import { Admin, AllRoadmaps, EditStep, Error, Home, Login, Profil, Register, Roadmap, Roadmaps, Root } from "@src/pages";
 import { AdminWrapper, AuthWrapper, ProtectedWrapper } from "@src/wrapper";
 
 import { createBrowserRouter } from "react-router-dom";
@@ -36,8 +36,28 @@ const Router = createBrowserRouter([
 					},
 					{
 						path: "/mes-roadmaps",
-						element: <FilterProvider><Roadmap /></FilterProvider>,
-					}
+						element: <FilterProvider><Roadmaps/></FilterProvider>,
+					},
+					{
+						path: "/mes-roadmaps/:id",
+						element: <FilterProvider><Roadmap isEditable={true}/></FilterProvider>,
+					},
+					{
+						path: "/mes-roadmaps/:id/step/edit/:id",
+						element: <FilterProvider><EditStep /></FilterProvider>,
+					},
+					{
+						path: "/les-roadmaps",
+						element: <FilterProvider><AllRoadmaps/></FilterProvider>,
+					},
+					{
+						path: "/les-roadmaps/:id",
+						element: <FilterProvider><Roadmap isEditable={false}/></FilterProvider>,
+					},
+					{
+						path: "/les-roadmaps/:id/step/:id",
+						element: <FilterProvider><EditStep /></FilterProvider>,
+					},
 				]
 
 			},

@@ -1,68 +1,137 @@
-import { IRoadmap } from "@src/api/types/modelType";
-import { getMe } from "@src/api/user";
-import RodmapCard from "@src/components/RoadmapCard/RodmapCard";
-import { RoadmapsFilter } from "@src/containers/Filters";
-import { AddRoadmapForm } from "@src/containers/Forms";
-import { FilterContext } from "@src/context/FilterContext";
-import useQuery from "@src/hooks/useQuery";
-import { FloatButton } from 'antd';
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { BiPlusCircle } from 'react-icons/bi';
-const Roadmap = () => {
-	const [open, setOpen] = useState(false);
-	const [roadmaps , setRoadmaps] = useState<IRoadmap[]>([])
-	const {setOriginalData,filteredData} = useContext(FilterContext)
-	const queryFunction = useCallback(() => getMe({include:{roadmaps:true}}), [])
+import { getOneRoadmap } from "@src/api/roadmap"
+import { createStep, deleteStep } from "@src/api/step"
+import { IRoadmap } from "@src/api/types/modelType"
+import { AuthContext } from "@src/context/AuthContext"
+import useMutation from "@src/hooks/useMutation"
+import useQuery from "@src/hooks/useQuery"
+import { Button, FloatButton, Image, Input, Popconfirm, message } from "antd"
+import { useContext, useEffect, useState } from "react"
+import { AiOutlineCloseCircle } from 'react-icons/ai'
+import { BiPlusCircle } from "react-icons/bi"
+import { RiDeleteBin6Fill } from "react-icons/ri"
+import { useNavigate, useParams } from "react-router-dom"
+interface RoadmapProps {
+	isEditable?: boolean
+}
+
+const Roadmap = ({isEditable}:RoadmapProps) => {
+	const {id} = useParams<{id:string}>()
+	const [roadmap, setRoadmap] = useState<IRoadmap>({})
+	const [title, setTitle] = useState('')
+	const [isOpen, setIsOpen] = useState(false)
+	const navigate = useNavigate()
+	const {user} = useContext(AuthContext)
 	
-
-	const showModalForm = () => {
-		setOpen(true);
-	};
-
-	const {error} = useQuery({
-		queryFn: queryFunction,
-		queryKey: ['user', 'roadmaps'],
-		onSuccess: (data:any) => {
-			console.log('exécuté')
-			setRoadmaps(data.object.roadmaps)
-		},
-		onError: (error:any) => console.log('🚀 ~ file: Login.tsx:600000 ~ Login ~ error', error)
-	})
+	
+	const goToStep = (id:string) => {
+		const link = isEditable ? `/mes-roadmaps/${id}/step/edit/${id}` : `/les-roadmaps/${id}/step/${id}`
+		navigate(link)
+	}
 
 	useEffect(() => {
-		setOriginalData(roadmaps) 
-	}, [roadmaps])
-
-
-
-
-	if(error) return <p>{error.response.data.message ?? error.message}</p>
-	return (
-		<div className='flex gap-2 flex-wrap pb-5 justify-center'>
-			<div className='sticky top-0 min-h-[60px] w-[100%] bg-white z-10 flex items-center px-5 py-2 shadow'>
-				<RoadmapsFilter />
-			</div>
-			<div className='flex gap-2 flex-wrap w-[100%] lg:pl-[1rem]'>
-			{filteredData &&
-				filteredData.map((roadmap:IRoadmap, index:number) => 
-				<RodmapCard 
-					key={roadmap.title ? roadmap.title+index : index} 
-					roadmap={roadmap}
-					setOpen={setOpen}
-				/>
-				)
+		if(roadmap.authorId && user.id) {
+			if(roadmap.authorId !== user?.id) {
+				navigate(`/les-roadmaps/${id}`)
 			}
-			<AddRoadmapForm
-				open={open}
-				setOpen={setOpen}
-			/>
-		    <FloatButton.Group shape="circle" className='right-[10px] sm:right-[20px] md:right-[50px] xl:right-[70px]'>
-				<FloatButton 
-				icon={<BiPlusCircle className='text-slate-900 text-xl'/>} 
-				onClick={showModalForm}
-				tooltip='Ajouter une roadmap'
+		}
+	}, [roadmap, user]);
+
+
+	useQuery({
+		queryFn: (id) => getOneRoadmap(id,{include:{steps:true}}),
+		queryKey: ['roadmap', id],
+		onSuccess: (data) => setRoadmap(data.object),
+		onError: (error) => console.log(error),
+	})
+
+	const {mutate} = useMutation({
+		mutationFn: createStep,
+		queryKey: ['roadmap', id],
+		onSuccess: (response) => {
+			message.success('Création réussis !')
+			setTitle('')
+			goToStep(response.data.object.id)
+		},
+		// onError: (error) => console.log(error),
+	})
+
+		const {mutate: deleteMutation} = useMutation({
+		queryKey: ['roadmap', id],
+		mutationFn: (id) => deleteStep(id),
+		onSuccess: (response) => message.success(response.data.message),
+		onError: (error) => message.error(error.response.data.message)
+	})
+
+	const newStep = async () => {
+		if(!title) return
+		mutate({roadmapId: id, title})
+	}
+
+	const handleClose = () => {
+		setTitle('')
+		setIsOpen(false)
+	}
+
+
+	return (
+		<div className='relative h-[100%]'>
+			{isOpen &&			
+			<div className='absolute top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] min-w-[200px] border-solid border-[0.5px] border-gray-300  p-5 rounded-md shadow-lg gb-white flex flex-col'>
+				isEditable && <AiOutlineCloseCircle className='absolute top-2 right-2 cursor-pointer hover:scale-125' size={'15px'} color={'red'} onClick={handleClose}/>
+				<p className='pt-5'>Quel est le nom de cette thématique ?</p>
+				<div className='flex gap-2'>
+					<Input placeholder="React [context]" name='title' onChange={(e) => setTitle(e.target.value)}/>
+					<Button className='w-fit self-end' onClick={newStep}>Valider</Button>
+				</div>
+			</div>
+			}
+			<div className='flex gap-5 items-center'>
+				<div>
+				<Image
+					width={100}
+					src={`http://localhost:4000/image/${roadmap.imageUrl}`}
 				/>
-			</FloatButton.Group>
+				{/* <Rating note={roadmap.rating ?? 0} numberRating={roadmap.numberRatings ?? 0} /> */}
+				</div>
+				<div>
+					<h1>{roadmap.title}</h1>
+					<p>{roadmap.description}</p>
+				</div>
+				{
+					isEditable &&
+					<FloatButton.Group shape="circle" className='right-[10px] sm:right-[20px] md:right-[50px] xl:right-[70px]'>
+						<FloatButton 
+						icon={<BiPlusCircle className='text-slate-900 text-xl'/>} 
+						onClick={() => setIsOpen(true)}
+						tooltip='Créer une étape'
+						/>
+					</FloatButton.Group>
+				}
+			</div>
+			<div className="py-5 my-5">
+				<h2 className='text-sky-500 pb-5'>Les Thematiques</h2>
+				<div className='flex gap-5 flex-wrap'>
+					{ roadmap?.steps &&
+						roadmap.steps?.map((step, index) => 
+						<div 
+						className='group  w-[200px] p-5 rounded-md text-center border-solid border-1 border-gray-100 cursor-pointer hover:border-sky-300 hover:shadow-md relative'
+							key={step.id ?? '' +index} 
+							onClick={() => goToStep(step.id ?? '')}
+						>
+							<Popconfirm
+								title="Delete the task"
+								description="Are you sure to delete this task?"
+								onConfirm={(e) => {e?.stopPropagation();deleteMutation(step.id)}}
+								onCancel={(e) => e?.stopPropagation()}
+								okText="Yes"
+								cancelText="No"
+							>
+							{isEditable && <RiDeleteBin6Fill className='absolute top-2 right-2 hidden group-hover:block' size={'15px'} color={'red'} onClick={(e) => e.stopPropagation()}/>}
+							</Popconfirm>
+							<span className='block py-2 px-5'>{step.title}</span>
+						</div>)
+					}
+				</div>
 			</div>
 		</div>
 	)

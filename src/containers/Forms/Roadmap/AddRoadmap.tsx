@@ -32,7 +32,7 @@ const AddRoadmap = ({open, setOpen, roadmap}:IAddRoadmap) => {
 
 	const {mutate: newRodmap} = useMutation({
 		mutationFn: createRoadmap,
-		queryKey: ['user', 'roadmaps'],
+		queryKey: ['roadmaps'],
 		onSuccess: () => resetForm(),
 		onError: (error) => {
 			console.log("🚀 ~ file: AddRoadmap.tsx:38 ~ AddRoadmap ~ error:", error)
@@ -42,7 +42,7 @@ const AddRoadmap = ({open, setOpen, roadmap}:IAddRoadmap) => {
 
 	const {mutate: update} = useMutation({
 		mutationFn: updateRoadmap,
-		queryKey: ['user', 'roadmaps'],
+		queryKey: ['roadmaps'],
 		onSuccess: () => resetForm(),
 		onError: (error) => {
 			console.log("🚀 ~ file: AddRoadmap.tsx:29 ~ error", error)

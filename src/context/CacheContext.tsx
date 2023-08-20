@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 interface Cache{
 	[key:string]: any
@@ -22,9 +22,6 @@ export const CacheProvider = ({ children }: any) => {
 		setCache(newCache)
 	}
 
-	useEffect(() => {
-		console.log("🚀 ~ file: CacheContext.tsx:28 ~ CacheProvider ~ cache:", cache)
-	}, [cache])
 	const removeAll = () => {
 		setCache({})
 	}

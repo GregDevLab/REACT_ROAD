@@ -3,6 +3,7 @@ import { CacheContext } from "@src/context/CacheContext";
 import { useContext, useEffect, useState } from 'react';
 
 export interface UserAuth {
+	id?: string;
 	name?: string;
 	email?: string;
 	role?: string;

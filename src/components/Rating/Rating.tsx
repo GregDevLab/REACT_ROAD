@@ -1,5 +1,5 @@
 import { IoStarHalf, IoStarOutline, IoStarSharp } from 'react-icons/io5';
-type RatingProps = {
+export type RatingProps = {
 	note: number
 	numberRating: number
 }

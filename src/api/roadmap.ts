@@ -3,8 +3,9 @@ import { IRoadmap, SlecteOptions } from "./types/modelType";
 
 const BASE_URL = "/roadmap"
 
-export const getOneRoadmap = async (id:string|number) => {
-	const response =  axiosInstance.get(`${BASE_URL}/show/${id}`);
+export const getOneRoadmap = async (id:string|number, options?:SlecteOptions) => {
+	console.log("🚀 ~ file: roadmap.ts:7 ~ getOneRoadmap ~ id:", id)
+	const response =  axiosInstance.get(`${BASE_URL}/show/${id}`,{params: { select:JSON.stringify(options)}});
 	return response;
 }
 
@@ -14,7 +15,7 @@ export const createRoadmap = async (data:IRoadmap) => {
 }
 
 export const getAllRoadmap = async (options?:SlecteOptions) => {
-	const response =  axiosInstance.get(`${BASE_URL}`, {params: { select:JSON.stringify(options)}});
+	const response = await axiosInstance.get(`${BASE_URL}`, {params: { select:JSON.stringify(options)}});
 	return response;
 }
 

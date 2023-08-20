@@ -3,7 +3,7 @@ import { AxiosResponse } from "axios"
 import { useContext, useEffect, useState } from 'react'
 
 interface QueryProps {
-	queryFn: () => Promise<AxiosResponse<any, any>>
+	queryFn: (id?:any) => Promise<AxiosResponse<any, any>>
 	queryKey: [string, any?],
 	onSuccess?: (data:any) => void
 	onError?: (error:any) => void
@@ -25,7 +25,7 @@ const useQuery = ({queryFn, queryKey, onSuccess, onError, enabled = true}:QueryP
 		try {
 			const cachedData = cache[queryKey.join("-")]
 			if(!cachedData){
-				const response = await queryFn();
+				const response = await queryFn(queryKey[1]);
 				addKey(queryKey.join('-'), response.data)
 				setData(response.data);
 				onSuccess && onSuccess(response.data)

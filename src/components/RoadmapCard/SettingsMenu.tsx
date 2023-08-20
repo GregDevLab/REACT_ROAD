@@ -12,7 +12,7 @@ const SettingsMenu = ({id, isPublished}:SettingsMenuProps) => {
 	
 	const {mutate: toggleStatus } = useMutation({
 		mutationFn: updateRoadmap,
-		queryKey: ['user', 'roadmaps'],
+		queryKey: ['roadmaps'],
 		onSuccess: () => {
 			console.log("🚀 ~ file: SettingsMenu.tsx:76 ~ onSuccess: ~ id", id)
 		},
@@ -23,7 +23,7 @@ const SettingsMenu = ({id, isPublished}:SettingsMenuProps) => {
 
 	const {mutate: handleDelete} = useMutation({
 		mutationFn: deleteRoadmap,
-		queryKey: ['user', 'roadmaps'],
+		queryKey: ['roadmaps'],
 		onSuccess: () => {
 			message.success('Suppression réussie');
 		},

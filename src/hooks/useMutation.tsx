@@ -10,7 +10,7 @@ interface QueryProps {
 }
 
 const useMutation = ({mutationFn,queryKey, onError, onSuccess}: QueryProps) => {
-	console.log("🚀 ~ file: useMutation.tsx:13 ~ useMutation ~ queryKey:", queryKey)
+
 	const {invalidateKey} = useContext(CacheContext)
 	const mutate = async (data?: unknown, select?: unknown) => {
 		try {

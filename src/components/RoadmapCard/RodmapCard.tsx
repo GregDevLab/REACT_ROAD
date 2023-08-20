@@ -5,17 +5,33 @@ import SettingsMenu from "@src/components/RoadmapCard/SettingsMenu";
 import Title from "@src/components/RoadmapCard/Title";
 import { AddRoadmapForm } from "@src/containers/Forms";
 import { Avatar, Badge, Card } from "antd";
-import { useState } from "react";
+import React, { useState } from "react";
+import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 import { IoNavigateOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 const { Meta } = Card;
 
 interface RDMProps {
     roadmap: IRoadmap;
 	setOpen: React.Dispatch<React.SetStateAction<any>>;
+	isEditable?: boolean
 }
 
-const RodmapCard = ({ roadmap }: RDMProps) => {
+
+
+const RodmapCard = ({ roadmap, isEditable }: RDMProps) => {
 	const [open, setOpen] = useState(false);
+	const navigate = useNavigate()
+	
+	let cardAction = isEditable ? [
+		<SettingsMenu key="settings" id={roadmap?.id ? roadmap?.id.toString() : '' } isPublished={roadmap.isPublished ? roadmap.isPublished : false} />,
+		<EditOutlined key="edit" onClick={() => setOpen(true)} />
+	] : [
+		<AiOutlineLike key="like" onClick={() => console.log('like')} />,
+		<AiOutlineDislike key="dislike" onClick={() => console.log('dislike')} />
+	];
+
+
 
     return (
         <div className="w-[100%] lg:w-[49%] xl:w-[32%] h-[250px] shadow rounded-md">
@@ -32,15 +48,13 @@ const RodmapCard = ({ roadmap }: RDMProps) => {
                         justifyContent: "space-between",
                     }}
                     actions={[
-						<SettingsMenu key="settings" id={roadmap?.id ? roadmap?.id.toString() : '' } isPublished={roadmap.isPublished ? roadmap.isPublished : false} />,
-                        <EditOutlined
-                            key="editer"
-                            onClick={() => setOpen(true)}
-                        />,
+						...cardAction,
                         <IoNavigateOutline
                             key="voir"
-                            onClick={() =>
-                                console.log("Rediriger vers la roadmap")
+                            onClick={() =>{
+									const link = isEditable ? `/mes-roadmaps/${roadmap.id}` : `/les-roadmaps/${roadmap.id}` 
+									navigate(link)
+								}
                             }
                         />,
                     ]}
@@ -48,7 +62,7 @@ const RodmapCard = ({ roadmap }: RDMProps) => {
                     <Meta
                         avatar={
                             <Avatar
-                                src={`http://localhost:4000/image/${roadmap.imageUrl}`}
+                                src={`${import.meta.env.VITE_IMAGE_URL}/${roadmap.imageUrl}`}
                             />
                         }
                         title={

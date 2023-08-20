@@ -33,10 +33,6 @@ export const FilterProvider = ({children}:any) => {
 		setFilteredData(originalData);
 	}, [originalData]);
 
-	useEffect(() => {
-		console.log("🚀 ~ file: FilterContext.tsx:26 ~ FilterProvider ~ filteredData:", filteredData)
-	}, [filteredData]);
-
 	return (
 		<FilterContext.Provider value={{setOriginalData, sort,search, filteredData, filterBoolean}}>
 			{children}

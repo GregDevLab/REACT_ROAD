@@ -11,6 +11,12 @@ const App: React.FC = () => {
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+
+
+	// console.log = () => {}
+	// console.error = () => {}
+	// console.warn = () => {}
+
     return (
         <Layout className="min-h-screen max-h-screen overflow-hidden">
             <Sider
