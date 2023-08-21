@@ -20,6 +20,7 @@ interface UserData {
 	name: string;
 	email: string;
 	role?: string;
+	id?: string
 }
 
 const Login = () => {
@@ -35,9 +36,10 @@ const Login = () => {
 	})
 
 	const userLoginSuccess = (data:UserData) => {
-		const {name,email, role } = data;
+		const {name,email, role, id } = data;
 		handleConnect({
 			name,
+			id,
 			email,
 			role: role ? role : "USER",
 			isLoggedIn: true,
@@ -91,5 +93,4 @@ const Login = () => {
     </Form>
 	)
 };
-
 export default Login;

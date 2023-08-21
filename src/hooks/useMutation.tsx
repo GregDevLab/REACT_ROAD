@@ -27,7 +27,8 @@ const useMutation = ({mutationFn,queryKey, onError, onSuccess}: QueryProps) => {
 	}
 
 	return {
-		mutate
+		mutate,
+		invalidateKey
 	}
 }
 

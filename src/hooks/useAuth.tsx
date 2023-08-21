@@ -1,18 +1,16 @@
 import { getMe, logOut } from "@src/api/user";
 import { CacheContext } from "@src/context/CacheContext";
+import { message } from "antd";
 import { useContext, useEffect, useState } from 'react';
 
 export interface UserAuth {
-	id?: string;
-	name?: string;
-	email?: string;
-	role?: string;
+	[key: string]: any;
 	isLoggedIn: boolean;
 }
 
 const useAuth = () => {
 	const {removeAll} = useContext(CacheContext);
-	const [user, setUser] = useState<UserAuth>({ isLoggedIn: false });	
+	const [user, setUser] = useState<UserAuth>({ isLoggedIn: false, id: null, name: null, email: null });	
 	const [loading, setLoading] = useState(true);
 
 	const handleConnect = (user: UserAuth) => {
@@ -40,10 +38,17 @@ const useAuth = () => {
 		if (isLoggedIn) {
 			getMe()
 			.then(({ data }) => {
-				handleConnect({ isLoggedIn: true, ...data.object });
+				console.log("🚀 ~ file: useAuth.tsx:44 ~ .then ~ data:", data)
+				handleConnect({
+					id: data.object.id,
+					name: data.object.name,
+					email: data.object.email,
+					role: data.object.role,
+					isLoggedIn: true 
+				});
 			})
 			.catch((error) => {
-				console.log("🚀 ~ file: useAuth.tsx:45 ~ useEffect ~ error:", error)
+				message.error('vous avez été déconnecté');
 				handleDisconnect()
 			})
 			.finally(() => {
@@ -55,6 +60,10 @@ const useAuth = () => {
 			setLoading(false);
 		}, 1000);
 	}, []);
+
+	useEffect(() => {
+		console.log("🚀 ~ file: useAuth.tsx:64 ~ useAuth ~ user:", user)
+	},[user])
 	
 	return {
 		user,

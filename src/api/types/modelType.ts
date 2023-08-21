@@ -4,6 +4,10 @@ export type SlecteOptions = {
 
 type Role = 'USER' | 'ADMIN'
 
+enum ReactionType {
+	LIKE = 'LIKE',
+	DISLIKE = 'DISLIKE'
+}
 export interface IUser {
 	id        		?:string, 
 	email     		?:string,
@@ -16,6 +20,8 @@ export interface IUser {
 	steps			?:IStep[],
 	createdAt 		?:Date,
 	updatedAt 		?:Date,
+	_count			?:{[key:string]:any}
+	reactions		?:IReaction[],
 }
 
 export interface IRoadmap {
@@ -31,6 +37,7 @@ export interface IRoadmap {
 	isPublished		?:boolean,
 	createdAt 		?:Date,
 	updatedAt 		?:Date,
+	reactions		?:IReaction[],
 }
 
 export interface IStep {
@@ -46,4 +53,13 @@ export interface IStep {
 	isPublished			?:Boolean  
 	createdAt 			?:Date 
 	updatedAt 			?:Date 
+}
+
+export interface IReaction {
+	id       	?:string,       
+	type     	?:ReactionType,
+	userId   	?:string,       
+	roadmapId   ?:string ,   	 
+	user     	?:IUser,         
+    roadmap     ?:IRoadmap,      
 }

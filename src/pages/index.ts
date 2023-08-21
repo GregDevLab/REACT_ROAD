@@ -9,3 +9,4 @@ export {default as Roadmaps } from './Roadmaps/Roadmaps';
 export {default as AllRoadmaps } from './AllRoadmaps/AllRoadmaps';
 export {default as Roadmap } from './Roadmap/Roadmap';
 export {default as EditStep } from './Step/EditStep';
+export {default as ViewStep } from './Step/ViewStep';

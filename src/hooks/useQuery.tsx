@@ -7,16 +7,18 @@ interface QueryProps {
 	queryKey: [string, any?],
 	onSuccess?: (data:any) => void
 	onError?: (error:any) => void
-	enabled?: boolean
+	enabled?: boolean,
+	ignoreCache?: boolean
 }
 
-const useQuery = ({queryFn, queryKey, onSuccess, onError, enabled = true}:QueryProps) => {
+const useQuery = ({queryFn, queryKey, onSuccess, onError, enabled = true, ignoreCache=false}:QueryProps) => {
 	const {cache, addKey} = useContext(CacheContext)
 	
 	const [data, setData] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<any>(null)
 	
+
 	const fetchData = async () => {
 		if(!enabled){
 			return
@@ -24,7 +26,7 @@ const useQuery = ({queryFn, queryKey, onSuccess, onError, enabled = true}:QueryP
 		setLoading(true);
 		try {
 			const cachedData = cache[queryKey.join("-")]
-			if(!cachedData){
+			if(!cachedData || ignoreCache){
 				const response = await queryFn(queryKey[1]);
 				addKey(queryKey.join('-'), response.data)
 				setData(response.data);
@@ -52,7 +54,7 @@ const useQuery = ({queryFn, queryKey, onSuccess, onError, enabled = true}:QueryP
 		loading,
 		error,
 		queryFn,
-		refetch	: () => { enabled = true ;fetchData()}
+		refetch	: () => { enabled = true; ignoreCache = true ;fetchData()}
 	}
 }
 

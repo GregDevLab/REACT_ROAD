@@ -16,21 +16,9 @@ const EditStep = () => {
 	const [data, setData] = useState<IDataObj | null>(null)
 	const [preview, setPreview] = useState<boolean>(false)
 	const [axiosResponse, setAxiosResponse] = useState<any>(null)
-	const [readOnly, setReadOnly] = useState<boolean>(false)
 	const {user} = useContext(AuthContext)
 	const navigate = useNavigate()
 
-	useEffect(() => {
-		if(axiosResponse?.object.authorId && user.id) {
-			if(axiosResponse.object.authorId !== user?.id) {
-				setPreview(true)
-				setReadOnly(true)
-				if(window.location.href.includes('edit')) {
-					navigate(`/les-roadmaps/${axiosResponse.object.roadmapId}/step/${id}`)
-				}
-			}
-		}
-	}, [axiosResponse, user]);
 
 	const {loading} = useQuery({
 		queryKey: ['step', id],
@@ -64,6 +52,13 @@ const EditStep = () => {
 		}
 	}, [axiosResponse])
 	
+	useEffect(() => {
+		if(axiosResponse?.object.authorId && axiosResponse.object.authorId !== user?.id) {
+			if(window.location.href.includes('edit')) {
+				navigate(`/les-roadmaps/${axiosResponse.object.roadmapId}/step/${id}`)
+			}
+		}
+	}, [data])
 	
 	if (loading || !axiosResponse || !data) {
 		return <div>Chargement...</div>;
@@ -72,7 +67,6 @@ const EditStep = () => {
 	return (
 		<div className='max-w-[650px] mx-auto'>
 			{preview  && <EditorRender data={data}/>}
-			{!readOnly && 
 			<>
 				<div style={{display:`${preview ? 'none': 'block'}`}}>
 					<TextEditor 
@@ -83,7 +77,6 @@ const EditStep = () => {
 				</div>
 				<FloatButton type={preview ? 'primary' : 'default'} style={{ right: 44 }} icon={<VscPreview />} tooltip={<div>Prévisualiser</div>} onClick={() => setPreview(prev => !prev)}/>
 			</>
-			}
 		</div>
 	)
 }
